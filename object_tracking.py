@@ -9,26 +9,42 @@ import urllib
 import zipfile
 import requests
 
+# the input file 
 video_input_file_name = "528_528-0360_preview.mp4"
 
-
+# bounding box for the frame.
 def drawRectangle(frame, bbox):
+  # creates a variable p1 that stores the top-left corner of the rectangle as a tuple of two integers.
    p1 = (int(bbox[0]), int(bbox[1]))
+  # creates a variable p2 that stores the bottom-right corner of the rectangle as a tuple of two integers.
    p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
+  # creates a rectangle on the image with corners p1, p2 and color, thickness and 1 means the line will look smooth and less jagged.  
    cv2.rectangle(frame, p1, p2, (255,0,0), 2, 1)
 
+
+
+# display the bounding box on the frame.
 def displayRectangle(frame, bbox):
    plt.figure(figsize=(20,10))
+# creates a copy of the input image to avoid modifying the original one.
    frameCopy = frame.copy()
    drawRectangle(frameCopy, bbox)
+# converting the color format because OpenCV uses BGR while matplotlib expects RGB format.
    frameCopy = cv2.cvtColor(frameCopy, cv2.COLOR_RGB2BGR)
    plt.imshow(frameCopy); plt.axis('off')
 
+
+
+# draw the text on the frame.
+# location is a tuple of two integers that represent the bottom-left corner of the text string in the image.
 def drawText(frame, txt, location, color = (50, 170, 50)):
+   # 1 = font scale factor that is multiplied by the font-specific base size.
+   # 3 = thickness of the string in pixels.
    cv2.putText(frame, txt, location, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 3)
 
 
 
+# for the GOTURN tracker, download the GOTURN.zip file to use the tracker.
 # if not os.path.isfile('goturn.prototxt') or not os.path.isfile('goturn.caffemodel'):
 #     print("Downloading GOTURN model zip file")
 #     # urllib.request.urlretrieve('https://www.dropbox.com/sh/77frbrkmf9ojfm6/AACgY7-wSfj-LIyYcOgUSZ0Ua?dl=1', 'GOTURN.zip')
@@ -66,7 +82,7 @@ def drawText(frame, txt, location, color = (50, 170, 50)):
 # Set up tracker
 tracker_types = ['BOOSTING', 'MIL','KCF', 'CSRT', 'TLD', 'MEDIANFLOW', 'GOTURN','MOSSE']
 
-# Change the index to change the tracker type
+# Change the index to change the tracker type.
 tracker_type = tracker_types[1]
 
 if tracker_type == 'BOOSTING':
@@ -100,16 +116,20 @@ if not video.isOpened():
     print("Could not open video")
     sys.exit()
 else :
+    # getting the width and height of the video frame.
     width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
 video_output_file_name = 'race_car-' + tracker_type + '.mp4'
+# writing the video based on the tracker that we are using.
 video_out = cv2.VideoWriter(video_output_file_name,cv2.VideoWriter_fourcc(*'avc1'), 10, (width, height))
 
 
 
 # Define a bounding box
+# coordinates of the bounding box.
 bbox = (170, 220, 860, 200)
+# cv2.selectROI() function allows the user to manually select the ROI(region of interest) in an image by drawing a rectangle in an image with a mouse.
 #bbox = cv2.selectROI(frame, False)
 #print(bbox)
 displayRectangle(frame,bbox)

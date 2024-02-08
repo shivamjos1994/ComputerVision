@@ -3,7 +3,10 @@ import mediapipe as mp
 import time
 
 
-
+# mode = indicates whether to use static image mode or not.
+# model_complexity = determines the complexity of the pose landmark model. Higher values are more accurate but slower. The possible values are 0, 1, or 2. The default value is 1.
+# upBody = indicates whether to detect only the upper body or the full body. The default value is False, which means the full body is detected.
+# smooth = indicates whether to use temporal smoothing or not. Temporal smoothing reduces jitter and improves stability of the pose landmarks. 
 class poseDetector():
     def __init__(self, mode=False, model_complexity = 1, upBody=False, smooth=True, detectionCon=0.5, trackCon=0.5):
         self.mode = mode
@@ -17,25 +20,29 @@ class poseDetector():
         self.mpPose = mp.solutions.pose    
         self.pose = self.mpPose.Pose(self.mode, self.model_complexity, self.upBody, self.smooth, self.detectionCon, self.trackCon)
 
-    
+    # find the landmarks on the image
     def findPose(self, img, draw=True):
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.results = self.pose.process(imgRGB)
         if self.results.pose_landmarks:
             if draw:
+           # if the image has landmarks and draw is true then proceed, draw landmarks points and connect them on the image.
               self.mpDraw.draw_landmarks(img, self.results.pose_landmarks, self.mpPose.POSE_CONNECTIONS)
         return img
     
-
+    
+    # find the particular landmark on the image.
     def findPosition(self, img, draw=True):
         lmList = []
         if self.results.pose_landmarks:
             for id, lm in enumerate(self.results.pose_landmarks.landmark):
                 h, w, c = img.shape
                 # print(id, lm)
+                # the coordinates of the landmark on the image.
                 cx, cy =  int(lm.x*w), int(lm.y*h)
                 lmList.append([id, cx, cy])
                 if draw:
+                #  if draw is true then make a circle on the desired landmark that the user wants to see.
                    cv2.circle(img, (cx,cy), 2, (255, 0, 0), cv2.FILLED)
         return lmList
 

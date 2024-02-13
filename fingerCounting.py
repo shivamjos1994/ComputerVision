@@ -47,9 +47,8 @@ while cv2.waitKey(1) != 27:
     if len(lmList) != 0:
        fingers = []
        # for thumb.()
-        # '<' is actually for the left hand, but we've flipped the frame so it'll work on the right hand as well. Change comparison operator..
-        #   ... to see the effects on both hands. (it'll work properly for one hand only.)
-    #  here [1] means that it'll compare the landmarks from the x-axis, weather to be on left or right.
+        # Change comparison operator to see the effects on both hands. (it'll work properly for one hand only.)
+    #  here [1] means that it'll compare the landmarks from the x-axis, whether to be on left or right.
        if lmList[tipIds[0]][1] < lmList[tipIds[0]-1][1]:
            fingers.append(1)
        else:

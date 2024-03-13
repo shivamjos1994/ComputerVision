@@ -138,7 +138,7 @@ def display_objects(im, objects, threshold=0.25):
 
     # convert image to RGB since we're using matplotlib for displaying image.
     mp_img = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
-    plt.figure(figsize=(30,10))
+    plt.figure(figsize=(20,10))
     plt.imshow(mp_img)
     plt.show()
 
@@ -178,7 +178,7 @@ display_objects(im, objects)"""
 
 
 
-im = cv2.imread('images/teddy.jpg')
+im = cv2.imread('images/giraffe-zebra.jpg')
 objects = detect_objects(net, im)
 display_objects(im, objects)
 
